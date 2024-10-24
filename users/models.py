@@ -10,6 +10,14 @@ class User(AbstractUser):
         verbose_name="email", help_text="Введите свой email", unique=True
     )
 
+    tg_chat_id = models.CharField(
+        max_length=50,
+        verbose_name="телеграм chat-id",
+        help_text="введите телеграм chat-id",
+        blank=True,
+        null=True,
+    )
+
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"

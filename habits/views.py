@@ -6,6 +6,7 @@ from habits.models import Habits
 from habits.paginators import ListViewPaginator
 from habits.permissions import IsOwner
 from habits.serializers import HabitSerializer
+from habits.services import create_periodic_task_for_tg
 
 
 # Create your views here.
@@ -14,9 +15,10 @@ class HabitCreateApiView(CreateAPIView):
     serializer_class = HabitSerializer
 
     def perform_create(self, serializer):
-        owner = serializer.save()
-        owner.user = self.request.user
-        owner.save()
+        data_habit = serializer.save()
+        data_habit.user = self.request.user
+        create_periodic_task_for_tg(self.request.user.email, data_habit)
+        data_habit.save()
 
 
 class HabitListApiView(ListAPIView):
@@ -42,6 +44,10 @@ class HabitUpdateApiView(UpdateAPIView):
     queryset = Habits.objects.all()
     serializer_class = HabitSerializer
     permission_classes = [IsOwner]
+
+    def perform_update(self, serializer):
+        data_habit = serializer.save()
+        data_habit.save()
 
 
 class HabitDestroyApiView(DestroyAPIView):
